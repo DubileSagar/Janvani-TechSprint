@@ -1,0 +1,53 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="saffronGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#FF9933"/>
+      <stop offset="100%" stop-color="#FF7700"/>
+    </linearGradient>
+    <linearGradient id="greenGrad" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#138808"/>
+      <stop offset="100%" stop-color="#0B5505"/>
+    </linearGradient>
+    <filter id="dropShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+      <feOffset dx="1" dy="2" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.3"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Abstract Speech Bubble formed by Tricolor Swooshes -->
+  <!-- Saffron Top Swoosh -->
+  <path d="M40 80 C40 40 70 20 100 20 C140 20 170 50 170 90 C170 110 160 130 145 145" 
+        stroke="url(#saffronGrad)" stroke-width="12" stroke-linecap="round" filter="url(#dropShadow)"/>
+
+  <!-- Green Bottom Swoosh -->
+  <path d="M145 145 C130 160 110 170 90 170 C50 170 20 140 20 100 C20 90 22 80 25 75 L20 100 L45 95" 
+        stroke="url(#greenGrad)" stroke-width="12" stroke-linecap="round" fill="none" filter="url(#dropShadow)"/>
+  
+  <!-- Ashoka Chakra (Central Element) -->
+  <g transform="translate(95, 95)">
+    <circle cx="0" cy="0" r="35" stroke="#000080" stroke-width="3" fill="none"/>
+    <circle cx="0" cy="0" r="4" fill="#000080"/>
+    <!-- 24 Spokes -->
+    <g stroke="#000080" stroke-width="1.5">
+      <line x1="0" y1="-4" x2="0" y2="-35"/>
+      <line x1="0" y1="4" x2="0" y2="35"/>
+      <line x1="3.5" y1="-2" x2="30.3" y2="-17.5"/>
+      <line x1="-3.5" y1="2" x2="-30.3" y2="17.5"/>
+      <line x1="3.5" y1="2" x2="30.3" y2="17.5"/>
+      <line x1="-3.5" y1="-2" x2="-30.3" y2="-17.5"/>
+      <line x1="2" y1="-3.5" x2="17.5" y2="-30.3"/>
+      <line x1="-2" y1="3.5" x2="-17.5" y2="30.3"/>
+      <line x1="2" y1="3.5" x2="17.5" y2="30.3"/>
+      <line x1="-2" y1="-3.5" x2="-17.5" y2="-30.3"/>
+      <line x1="4" y1="0" x2="35" y2="0"/>
+      <line x1="-4" y1="0" x2="-35" y2="0"/>
+    </g>
+  </g>
+</svg>

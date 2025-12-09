@@ -1,0 +1,45 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="saffronLinear" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#FF9933"/>
+      <stop offset="100%" stop-color="#FF7700"/>
+    </linearGradient>
+    <linearGradient id="greenLinear" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#138808"/>
+      <stop offset="100%" stop-color="#0B5505"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Outer Shield/Emblem Shape (Navy Blue - Authority) -->
+  <path d="M100 10 C50 10 20 40 20 90 C20 140 50 170 100 190 C150 170 180 140 180 90 C180 40 150 10 100 10 Z" 
+        fill="#FFFFFF" stroke="#0A1A4F" stroke-width="6"/>
+
+  <!-- Inner Elements -->
+  <g transform="translate(0, 5)">
+      
+    <!-- Saffron Voice Wave (Top) -->
+    <path d="M60 80 C60 50 80 40 100 40 C120 40 140 50 140 80" 
+          stroke="url(#saffronLinear)" stroke-width="10" stroke-linecap="round" fill="none"/>
+    
+    <!-- Green Voice Wave (Bottom) -->
+    <path d="M60 120 C60 150 80 160 100 160 C120 160 140 150 140 120" 
+          stroke="url(#greenLinear)" stroke-width="10" stroke-linecap="round" fill="none"/>
+
+    <!-- Central Ashoka Chakra (Navy Blue - Governance) -->
+    <circle cx="100" cy="100" r="18" stroke="#0A1A4F" stroke-width="2.5" fill="none"/>
+    <circle cx="100" cy="100" r="3" fill="#0A1A4F"/>
+    <g stroke="#0A1A4F" stroke-width="1.5">
+      <line x1="100" y1="82" x2="100" y2="118"/>
+      <line x1="82" y1="100" x2="118" y2="100"/>
+      <line x1="87" y1="87" x2="113" y2="113"/>
+      <line x1="87" y1="113" x2="113" y2="87"/>
+    </g>
+    
+    <!-- Connecting "Voice" Lines (Navy) -->
+    <path d="M100 82 V 40" stroke="#0A1A4F" stroke-width="0" stroke-dasharray="2 2"/> 
+    
+    <!-- Side Signal Dots (Digital Aspect) -->
+    <circle cx="45" cy="100" r="4" fill="#0A1A4F"/>
+    <circle cx="155" cy="100" r="4" fill="#0A1A4F"/>
+  </g>
+</svg>

@@ -1,0 +1,41 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="softDrop" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="2"/>
+      <feOffset dx="1" dy="2" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.2"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background Circle (Clean White) -->
+  <circle cx="100" cy="100" r="90" fill="#FFFFFF" stroke="#E2E8F0" stroke-width="1"/>
+
+  <!-- The "Resolution" Swoosh (Navy Blue) -->
+  <!-- A circular arrow/swoosh wrapping around the voice bars -->
+  <path d="M100 35 C64.1 35 35 64.1 35 100 C35 135.9 64.1 165 100 165 C125 165 147 151 158 130" 
+        stroke="#0A1A4F" stroke-width="6" stroke-linecap="round" stroke-dasharray="10 0" filter="url(#softDrop)"/>
+  <path d="M158 130 L150 125 M158 130 L165 125" stroke="#0A1A4F" stroke-width="6" stroke-linecap="round"/> <!-- Arrow tip hint -->
+
+  <!-- The "Voice" Bars (Tricolor Equalizer) -->
+  <g transform="translate(0, 5)" filter="url(#softDrop)">
+    <!-- Left Bar (Saffron) -->
+    <rect x="65" y="80" width="18" height="40" rx="9" fill="#FF9933"/>
+    
+    <!-- Center Bar (Navy - Authority/Stability) -->
+    <rect x="91" y="60" width="18" height="80" rx="9" fill="#0A1A4F"/>
+    
+    <!-- Right Bar (Green) -->
+    <rect x="117" y="80" width="18" height="40" rx="9" fill="#138808"/>
+  </g>
+
+  <!-- Digital Connection Dots -->
+  <circle cx="155" cy="60" r="4" fill="#FF9933"/>
+  <circle cx="45" cy="140" r="4" fill="#138808"/>
+
+</svg>

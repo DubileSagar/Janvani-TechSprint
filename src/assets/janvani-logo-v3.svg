@@ -1,0 +1,47 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <filter id="softShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+      <feOffset dx="2" dy="2" result="offsetblur"/>
+      <feComponentTransfer>
+        <feFuncA type="linear" slope="0.2"/>
+      </feComponentTransfer>
+      <feMerge>
+        <feMergeNode/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background Circle (Subtle Authority) -->
+  <circle cx="100" cy="100" r="95" fill="#F8FAFC" stroke="#E2E8F0" stroke-width="2"/>
+
+  <!-- Tricolor Swooshes (Indian Identity) -->
+  <!-- Saffron Top Swoosh -->
+  <path d="M40 100 C40 60 70 35 100 35 C140 35 170 65 170 100" 
+        stroke="#FF9933" stroke-width="8" stroke-linecap="round" fill="none"/>
+  
+  <!-- Green Bottom Swoosh -->
+  <path d="M160 100 C160 140 130 165 100 165 C60 165 30 135 30 100" 
+        stroke="#138808" stroke-width="8" stroke-linecap="round" fill="none"/>
+
+  <!-- Central Element: Location Pin + Speech Bubble -->
+  <g filter="url(#softShadow)">
+    <!-- Location Pin Body (Navy Blue - Authority) -->
+    <path d="M100 55 C75 55 55 75 55 100 C55 135 100 165 100 165 C100 165 145 135 145 100 C145 75 125 55 100 55 Z" 
+          fill="#000080"/>
+    
+    <!-- Inner Speech Bubble (White - Voice) -->
+    <path d="M100 70 C86 70 75 81 75 95 C75 105 80 112 88 116 L85 125 L96 119 C97 119 99 120 100 120 C114 120 125 109 125 95 C125 81 114 70 100 70 Z" 
+          fill="#FFFFFF"/>
+          
+    <!-- Ashoka Chakra Wheel (Blue - Center of Voice) -->
+    <circle cx="100" cy="95" r="12" stroke="#000080" stroke-width="2" fill="none"/>
+    <g stroke="#000080" stroke-width="1">
+      <line x1="100" y1="83" x2="100" y2="107"/>
+      <line x1="88" y1="95" x2="112" y2="95"/>
+      <line x1="91.5" y1="86.5" x2="108.5" y2="103.5"/>
+      <line x1="91.5" y1="103.5" x2="108.5" y2="86.5"/>
+    </g>
+  </g>
+</svg>

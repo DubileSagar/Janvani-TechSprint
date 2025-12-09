@@ -1,0 +1,133 @@
+.certificate-page {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+    background-color: #f0f2f5;
+    min-height: 100vh;
+}
+
+.no-print-controls {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.back-btn,
+.print-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 1rem;
+    transition: all 0.2s;
+}
+
+.back-btn {
+    background-color: #ddd;
+    color: #333;
+}
+
+.print-btn {
+    background-color: #138808;
+    
+    color: white;
+    box-shadow: 0 4px 6px rgba(19, 136, 8, 0.2);
+}
+
+.print-btn:hover {
+    background-color: #0d6e06;
+    transform: translateY(-2px);
+}
+
+
+.certificate-container {
+    position: relative;
+    width: 100%;
+    max-width: 900px;
+    
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+}
+
+.cert-bg {
+    width: 100%;
+    display: block;
+    border-radius: 4px;
+    
+}
+
+
+.cert-name {
+    position: absolute;
+    top: 55%;
+    
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Times New Roman', serif;
+    font-size: 2.5rem;
+    
+    font-weight: bold;
+    color: #1f2937;
+    text-transform: uppercase;
+    width: 60%;
+    text-align: center;
+}
+
+.cert-date {
+    position: absolute;
+    bottom: 16%;
+    
+    right: 18%;
+    
+    transform: translateX(50%);
+    font-family: 'Times New Roman', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #333;
+}
+
+
+@media print {
+
+    
+    body * {
+        visibility: hidden;
+    }
+
+    
+    .certificate-container,
+    .certificate-container * {
+        visibility: visible;
+    }
+
+    
+    .certificate-container {
+        position: fixed;
+        left: 0;
+        top: 0;
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+        padding: 0;
+        box-shadow: none;
+    }
+
+    .cert-bg {
+        width: 100%;
+        height: auto;
+    }
+
+    
+    .no-print-controls,
+    .main-nav,
+    .branding-strip,
+    footer {
+        display: none !important;
+    }
+
+    @page {
+        size: landscape;
+        margin: 0;
+    }
+}

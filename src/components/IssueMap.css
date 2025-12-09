@@ -1,0 +1,25 @@
+.issue-map-container {
+    width: 100%;
+    height: 500px;
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    margin-bottom: 2rem;
+    background-color: #f3f4f6;
+}
+
+.map-info-window {
+    color: #333;
+    padding: 4px;
+}
+
+.map-info-window h3 {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    font-weight: 600;
+}
+
+.map-info-window p {
+    margin: 4px 0;
+    font-size: 14px;
+}

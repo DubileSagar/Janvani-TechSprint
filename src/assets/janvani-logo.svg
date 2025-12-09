@@ -1,0 +1,21 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="tricolor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#FF9933"/>
+      <stop offset="50%" stop-color="#FFFFFF"/>
+      <stop offset="100%" stop-color="#138808"/>
+    </linearGradient>
+  </defs>
+  
+  <!-- Speech Bubble Shape -->
+  <path d="M100 20C55.8172 20 20 51.3401 20 90C20 115.82 36.8366 138.292 62.5 150.5V180L93.5 158.8C95.6333 159.05 97.8 159.2 100 159.2C144.183 159.2 180 127.86 180 89.2C180 50.5401 144.183 20 100 20Z" fill="url(#tricolor)" stroke="#138808" stroke-width="2"/>
+  
+  <!-- Sound Waves / Voice Lines -->
+  <path d="M70 90H130" stroke="#000080" stroke-width="8" stroke-linecap="round"/>
+  <path d="M85 65H115" stroke="#000080" stroke-width="8" stroke-linecap="round"/>
+  <path d="M85 115H115" stroke="#000080" stroke-width="8" stroke-linecap="round"/>
+  
+  <!-- Ashoka Chakra Center (Simplified) -->
+  <circle cx="100" cy="90" r="12" stroke="#000080" stroke-width="2" fill="white"/>
+  <path d="M100 78V102M88 90H112M91.5 81.5L108.5 98.5M91.5 98.5L108.5 81.5" stroke="#000080" stroke-width="1"/>
+</svg>
