@@ -76,43 +76,23 @@ app.post('/api/send-sms', async (req, res) => {
 });
 
 // Get Public IP endpoint (to avoid CORS issues in frontend)
-app.get('/api/get-ip', async (req, res) => {
+app.get('/api/get-ip', (req, res) => {
     try {
-        // Try multiple IP providers with timeout
-        const ipProviders = [
-            'https://api.ipify.org?format=json',
-            'https://api.ip.sb/json',
-            'https://ipapi.co/json/'
-        ];
+        const xForwardedFor = req.headers['x-forwarded-for'];
+        // The x-forwarded-for header can contain multiple IPs (client, proxy1, proxy2...)
+        // We want the first one (the client)
+        let clientIp = xForwardedFor ? xForwardedFor.split(',')[0].trim() : req.socket.remoteAddress;
 
-        const fetchIp = async (url) => {
-            const controller = new AbortController();
-            const timeout = setTimeout(() => controller.abort(), 3000); // 3s timeout
+        // Normalize IPv6 localhost
+        if (clientIp === '::1' || clientIp === '::ffff:127.0.0.1') {
+            clientIp = '127.0.0.1';
+        }
 
-            try {
-                const response = await fetch(url, { signal: controller.signal });
-                clearTimeout(timeout);
-
-                if (!response.ok) throw new Error('Network response was not ok');
-                const data = await response.json();
-                const ip = data.ip || data.query;
-                if (!ip) throw new Error('No IP in response');
-                return ip;
-            } catch (error) {
-                clearTimeout(timeout);
-                throw error;
-            }
-        };
-
-        // Try providers in parallel, return first successful result
-        const ip = await Promise.any(ipProviders.map(fetchIp));
-        console.log(`✅ IP detected: ${ip}`);
-        res.json({ success: true, ip });
+        console.log(`✅ IP detected (from headers): ${clientIp}`);
+        res.json({ success: true, ip: clientIp });
     } catch (error) {
-        console.error('All IP providers failed:', error);
-        // Fallback: use the request IP from headers
-        const fallbackIp = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-        res.json({ success: true, ip: fallbackIp, fallback: true });
+        console.error('IP detection error:', error);
+        res.json({ success: false, ip: '', error: error.message });
     }
 });
 
