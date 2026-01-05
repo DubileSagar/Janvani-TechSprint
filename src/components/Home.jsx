@@ -19,7 +19,7 @@ const BrandingStrip = () => (
     <div className="branding-content">
       <div className="gov-logos-left">
         <div className="gov-text">
-          <span className="gov-top">Government of Jharkhand</span>
+          <span className="gov-top">Government of India</span>
           <span className="gov-main">Accelerating Growth, Empowering Citizens</span>
         </div>
       </div>

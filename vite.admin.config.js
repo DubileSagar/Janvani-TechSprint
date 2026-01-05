@@ -55,6 +55,7 @@ export default defineConfig({
         },
     },
     build: {
+        outDir: 'dist-admin',
         rollupOptions: {
             input: {
                 admin: resolve(__dirname, 'admin.html')

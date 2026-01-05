@@ -1,6 +1,6 @@
 export const translations = {
     en: {
-        
+
         nav_home: "Home",
         nav_report: "Report",
         nav_about: "About",
@@ -10,7 +10,7 @@ export const translations = {
         nav_logout: "Log Out",
         nav_login: "Login",
 
-        
+
         hero_title: "Report Local Civic Issues",
         hero_desc: "Empowering citizens to improve their neighborhoods together. Make your voice heard and help create a better community for everyone.",
         hero_cta: "Report Now",
@@ -22,12 +22,12 @@ export const translations = {
         ranking_title: "District Ranking",
         ranking_effectiveness: "Effectiveness",
 
-        
+
         about_title: "About Us",
         about_p1: "Our platform allows residents to report local civic issues such as potholes, broken streetlights, water leaks, garbage collection, and more. We aim to create a collaborative environment where citizens, government bodies, and volunteers work together to make cities safer and cleaner.",
         about_p2: "Our mission is to harness the power of community feedback, crowdsource problem-solving, and ensure accountability in civic management.",
 
-        
+
         report_page_title: "Report an Issue",
         report_upload_label: "Upload Image",
         report_upload_desc: "Tap to upload image",
@@ -40,7 +40,7 @@ export const translations = {
         report_submit_btn: "Submit Report",
         report_success: "Report submitted successfully!",
 
-        
+
         issues_title: "Community Issues",
         issues_filter_district: "Filter by District",
         issues_filter_all: "All Districts",
@@ -52,7 +52,7 @@ export const translations = {
         issue_upvote: "Upvote",
         issue_downvote: "Downvote",
 
-        
+
         back_btn: "Back",
         withdraw_btn: "Withdraw Issue",
         issue_details_title: "Issue Details",
@@ -71,7 +71,7 @@ export const translations = {
         btn_cancel: "Cancel",
         btn_confirm_withdraw: "Yes, Withdraw",
 
-        
+
         profile_title: "Complete Your Profile",
         profile_desc: "Please provide your details to help us serve you better.",
         profile_name: "Full Name",
@@ -83,7 +83,7 @@ export const translations = {
         profile_save_btn: "Save & Continue",
         profile_detect_btn: "Auto-detect",
 
-        
+
         login_title: "Login",
         signup_title: "Sign Up",
         phone_label: "Phone Number",
@@ -91,8 +91,8 @@ export const translations = {
         send_otp_btn: "Send OTP",
         verify_btn: "Verify & Login",
 
-        
-        gov_title_jh: "Government of Jharkhand",
+
+        gov_title_jh: "Government of India",
         gov_subtitle: "Citizen Connect Portal",
         auth_mobile_input: "Enter mobile number",
         auth_otp_input: "Enter OTP",
@@ -113,7 +113,7 @@ export const translations = {
         auth_signup_failed: "Signup failed.",
         auth_name_placeholder: "Enter your name",
 
-        
+
         issue_1_title: "Potholes & Road Damage",
         issue_1_desc: "Report damaged roads, potholes, and infrastructure issues affecting traffic safety.",
         issue_2_title: "Street Lighting",
@@ -149,7 +149,7 @@ export const translations = {
         issue_17_title: "Others",
         issue_17_desc: "Any other civic issue not listed above.",
 
-        
+
         issues_title: "My Activity",
         filter_raised: "Raised Issues",
         filter_upvoted: "Upvoted Issues",
@@ -157,11 +157,11 @@ export const translations = {
         badge_mine: "My Issue",
         no_reports: "No reports found.",
 
-        
-        
 
 
-        
+
+
+
         nearby_title: "Existing reports near you",
         nearby_desc: "See if one matches your issue. Upvote instead of creating a duplicate.",
         distance_away: "away",
@@ -171,12 +171,12 @@ export const translations = {
         upvote_thanks: "Thanks for voting.",
         analyzing: "Analyzing...",
 
-        
+
         loading: "Loading...",
         language_toggle: "English"
     },
     hi: {
-        
+
         nav_home: "होम",
         nav_report: "रिपोर्ट करें",
         nav_about: "हमारे बारे में",
@@ -186,7 +186,7 @@ export const translations = {
         nav_logout: "लॉग आउट",
         nav_login: "लॉग इन",
 
-        
+
         hero_title: "स्थानीय नागरिक समस्याओं की रिपोर्ट करें",
         hero_desc: "नागरिकों को अपने पड़ोस को बेहतर बनाने के लिए सशक्त बनाना। अपनी आवाज़ उठाएं और सभी के लिए एक बेहतर समुदाय बनाने में मदद करें।",
         hero_cta: "अभी रिपोर्ट करें",
@@ -198,12 +198,12 @@ export const translations = {
         ranking_title: "जिला रैंकिंग",
         ranking_effectiveness: "प्रभावशीलता",
 
-        
+
         about_title: "हमारे बारे में",
         about_p1: "हमारा प्लेटफ़ॉर्म निवासियों को गड्ढों, टूटी स्ट्रीटलाइट, पानी के रिसाव, कचरा संग्रह, और अधिक जैसी स्थानीय नागरिक समस्याओं की रिपोर्ट करने की अनुमति देता है। हमारा उद्देश्य एक ऐसा सहयोगी वातावरण बनाना है जहां नागरिक, सरकारी निकाय और स्वयंसेवक शहरों को सुरक्षित और स्वच्छ बनाने के लिए मिलकर काम करें।",
         about_p2: "हमारा मिशन सामुदायिक प्रतिक्रिया की शक्ति का उपयोग करना, समस्या समाधान में सहयोग करना और नागरिक प्रबंधन में जवाबदेही सुनिश्चित करना है।",
 
-        
+
         report_page_title: "समस्या रिपोर्ट करें",
         report_upload_label: "छवि अपलोड करें",
         report_upload_desc: "छवि अपलोड करने के लिए टैप करें",
@@ -216,7 +216,7 @@ export const translations = {
         report_submit_btn: "रिपोर्ट भेजें",
         report_success: "रिपोर्ट सफलतापूर्वक भेजी गई!",
 
-        
+
         issues_title: "सामुदायिक समस्याएं",
         issues_filter_district: "ज़िले के अनुसार फ़िल्टर",
         issues_filter_all: "सभी ज़िले",
@@ -229,7 +229,7 @@ export const translations = {
         issue_upvote: "समर्थन",
         issue_downvote: "असमर्थन",
 
-        
+
         back_btn: "वापस",
         withdraw_btn: "समस्या वापस लें",
         issue_details_title: "समस्या विवरण",
@@ -248,7 +248,7 @@ export const translations = {
         btn_cancel: "रद्द करें",
         btn_confirm_withdraw: "हां, वापस लें",
 
-        
+
         profile_title: "अपना प्रोफ़ाइल पूरा करें",
         profile_desc: "कृपया हमें बेहतर सेवा देने में मदद करने के लिए अपना विवरण प्रदान करें।",
         profile_name: "पूरा नाम",
@@ -260,7 +260,7 @@ export const translations = {
         profile_save_btn: "सहेजें और जारी रखें",
         profile_detect_btn: "ऑटो-डिटेक्ट",
 
-        
+
         login_title: "लॉग इन",
         signup_title: "साइन अप",
         phone_label: "फ़ोन नंबर",
@@ -268,8 +268,8 @@ export const translations = {
         send_otp_btn: "ओटीपी भेजें",
         verify_btn: "सत्यापित करें और लॉग इन करें",
 
-        
-        gov_title_jh: "झारखंड सरकार",
+
+        gov_title_jh: "भारत सरकार",
         gov_subtitle: "नागरिक सेवा पोर्टल",
         auth_mobile_input: "मोबाइल नंबर दर्ज करें",
         auth_otp_input: "ओटीपी दर्ज करें",
@@ -290,7 +290,7 @@ export const translations = {
         auth_signup_failed: "साइनअप विफल रहा।",
         auth_name_placeholder: "अपना नाम दर्ज करें",
 
-        
+
         issue_1_title: "गड्ढे और सड़क क्षति",
         issue_1_desc: "यातायात सुरक्षा को प्रभावित करने वाली क्षतिग्रस्त सड़कों, गड्ढों और बुनियादी ढांचे की रिपोर्ट करें।",
         issue_2_title: "स्ट्रीट लाइटिंग",
@@ -326,7 +326,7 @@ export const translations = {
         issue_17_title: "अन्य",
         issue_17_desc: "ऊपर सूचीबद्ध नहीं कोई अन्य नागरिक समस्या।",
 
-        
+
         issues_title: "मेरी गतिविधि",
         filter_raised: "उठाए गए मुद्दे",
         filter_upvoted: "समर्थित मुद्दे",
@@ -334,11 +334,11 @@ export const translations = {
         badge_mine: "मेरी समस्या",
         no_reports: "कोई रिपोर्ट नहीं मिली।",
 
-        
-        
 
 
-        
+
+
+
         nearby_title: "आपके पास मौजूदा रिपोर्टें",
         nearby_desc: "देखें कि क्या कोई आपकी समस्या से मेल खाता है। एक डुप्लिकेट बनाने के बजाय समर्थन (Upvote) करें।",
         distance_away: "दूर",
@@ -347,7 +347,7 @@ export const translations = {
         upvote_thanks: "वोट करने के लिए धन्यवाद।",
         analyzing: "विश्लेषण कर रहा है...",
 
-        
+
         loading: "लोड हो रहा है...",
         language_toggle: "हिंदी"
     }

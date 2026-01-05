@@ -10,20 +10,20 @@ const AdminLogin = () => {
     const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
-    
+
     const CREDENTIALS = {
-        
+
         'ap.cm@crowdcivic.gov.in': { pass: 'ApCm@1234', role: 'SUPER_ADMIN', state: 'Andhra Pradesh', name: 'Hon. Chief Minister' },
         'jh.cm@crowdcivic.gov.in': { pass: 'JhCm@1234', role: 'SUPER_ADMIN', state: 'Jharkhand', name: 'Hon. Chief Minister' },
 
-        
+
         'ap.guntur.admin@crowdcivic.gov.in': { pass: 'Guntur@123', role: 'DISTRICT_ADMIN', state: 'Andhra Pradesh', district: 'Guntur', name: 'District Admin - Guntur' },
         'ap.visakhapatnam.admin@crowdcivic.gov.in': { pass: 'Vizag@123', role: 'DISTRICT_ADMIN', state: 'Andhra Pradesh', district: 'Visakhapatnam', name: 'District Admin - Visakhapatnam' },
         'ap.kurnool.admin@crowdcivic.gov.in': { pass: 'Kurnool@123', role: 'DISTRICT_ADMIN', state: 'Andhra Pradesh', district: 'Kurnool', name: 'District Admin - Kurnool' },
         'ap.tirupati.admin@crowdcivic.gov.in': { pass: 'Tirupati@123', role: 'DISTRICT_ADMIN', state: 'Andhra Pradesh', district: 'Tirupati', name: 'District Admin - Tirupati' },
         'ap.anantapur.admin@crowdcivic.gov.in': { pass: 'Anantapur@123', role: 'DISTRICT_ADMIN', state: 'Andhra Pradesh', district: 'Anantapur', name: 'District Admin - Anantapur' },
 
-        
+
         'jh.dhanbad.admin@crowdcivic.gov.in': { pass: 'Dhanbad@123', role: 'DISTRICT_ADMIN', state: 'Jharkhand', district: 'Dhanbad', name: 'District Admin - Dhanbad' },
         'jh.ranchi.admin@crowdcivic.gov.in': { pass: 'Ranchi@123', role: 'DISTRICT_ADMIN', state: 'Jharkhand', district: 'Ranchi', name: 'District Admin - Ranchi' },
         'jh.jamshedpur.admin@crowdcivic.gov.in': { pass: 'Jamshedpur@123', role: 'DISTRICT_ADMIN', state: 'Jharkhand', district: 'Jamshedpur', name: 'District Admin - Jamshedpur' },
@@ -36,12 +36,12 @@ const AdminLogin = () => {
         setIsLoading(true);
         setError('');
 
-        
+
         setTimeout(() => {
             const user = CREDENTIALS[email.toLowerCase()];
 
             if (user && user.pass === password) {
-                
+
                 const userData = {
                     email: email.toLowerCase(),
                     role: user.role,
@@ -66,7 +66,7 @@ const AdminLogin = () => {
                     <img src={logo} alt="JanVani Logo" className="admin-logo" />
                     <div className="admin-brand-text">
                         <h1>जनvani Admin</h1>
-                        <p>Government of Jharkhand</p>
+                        <p>Government of India</p>
                     </div>
                 </div>
 
