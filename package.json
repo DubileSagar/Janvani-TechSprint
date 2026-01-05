@@ -9,7 +9,7 @@
     "dev:admin": "vite serve --config vite.admin.config.js",
     "dev:admin:host": "vite serve --host --config vite.admin.config.js",
     "build": "vite build",
-    "build:admin": "vite build --config vite.admin.config.js",
+    "build:admin": "vite build --config vite.admin.config.js && mv dist-admin/admin.html dist-admin/index.html",
     "lint": "eslint .",
     "preview": "vite preview",
     "server": "node server.js"
