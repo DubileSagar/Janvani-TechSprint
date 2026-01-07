@@ -9,6 +9,7 @@ import PerformanceHighlights from './PerformanceHighlights';
 import { civicIssues } from '../constants/civicIssues';
 import { useLanguage } from '../context/LanguageContext';
 import NewsTicker from './NewsTicker';
+import { detectAdministrativeArea } from '../api/gis';
 import heroBg from '../assets/hero-bg.jpg';
 
 import swachhBg from '../assets/swachh-bg.png';
@@ -132,23 +133,64 @@ const Home = () => {
           console.log("Home: Found logged-in user state:", user.user_metadata.state);
           setUserState(user.user_metadata.state);
         } else {
-          // If no user (or no state in profile), try IP detection
-          console.log("Home: No user state, attempting IP detection...");
+          // If no user (or no state in profile), try GPS first, then IP
+          console.log("Home: No user state, attempting GPS detection...");
+          if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(async (pos) => {
+              const { latitude, longitude } = pos.coords;
+              try {
+                const gisResult = await detectAdministrativeArea(latitude, longitude);
+                if (gisResult && gisResult.areaName) {
+                  // map GIS result to likely state if possible, or use geocoding
+                  // For now, let's try a direct Google Geocoding fallback if GIS is ambiguous, 
+                  // or just use IP if GPS fails/user denies.
+                  // Actually, let's look for state in the GIS result properties or fallback
+                  console.log("Home: GPS GIS Result:", gisResult);
+                  // GIS usually returns district, so we might need state from it or use a reverse geocod helper
+
+                  // Quick Google Reverse Geocode for State
+                  const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+                  const resp = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`);
+                  const data = await resp.json();
+                  if (data.status === 'OK' && data.results[0]) {
+                    let detectedState = '';
+                    data.results[0].address_components.forEach(comp => {
+                      if (comp.types.includes('administrative_area_level_1')) detectedState = comp.long_name;
+                    });
+                    if (detectedState) {
+                      console.log("Home: GPS Detected State:", detectedState);
+                      setUserState(detectedState);
+                      return;
+                    }
+                  }
+                }
+              } catch (e) { console.warn("GPS State detect failed", e); }
+
+              // Fallback to IP inside the GPS callback if it failed? 
+              // Or just let the IP block below run concurrently? 
+              // Let's run IP block as fallback if we haven't set state yet.
+            }, (err) => {
+              console.warn("Home: GPS Denied/Failed", err);
+              // Fallback to IP is handled below concurrently, but might overwrite?
+              // Better to just let IP run, and if GPS comes later overwrite it.
+            });
+          }
+
+          // Concurrent IP Detection (will update if GPS hasn't yet, or be overwritten by GPS if GPS is slower/more accurate)
           const API_URL = import.meta.env.VITE_API_BASE_URL || '';
-          fetch(`${API_URL}/api/check-access`) // Reuse this endpoint as it returns IPInfo data
+          fetch(`${API_URL}/api/check-access`)
             .then(res => res.json())
             .then(data => {
               if (data.details && data.details.region) {
-                console.log("Home: Detected region from IP:", data.details.region);
-                setUserState(data.details.region);
+                // Only set if we don't have a state yet (or prefer IP? No, GPS is better).
+                // We'll set it, but GPS callback above will overwrite if it succeeds later.
+                setUserState(prev => prev || data.details.region);
               } else {
-                console.warn("Home: IP region not found, defaulting to Andhra Pradesh");
-                setUserState('Andhra Pradesh');
+                setUserState(prev => prev || 'Andhra Pradesh');
               }
             })
             .catch(err => {
-              console.warn("Home: Location detection failed, defaulting to Andhra Pradesh", err);
-              setUserState('Andhra Pradesh');
+              setUserState(prev => prev || 'Andhra Pradesh');
             });
         }
       });
@@ -221,7 +263,7 @@ const Home = () => {
   return (
     <div className="home">
       <BrandingStrip />
-      <NewsTicker />
+      <NewsTicker state={userState} />
       <HeroCarousel t={t} />
 
 
