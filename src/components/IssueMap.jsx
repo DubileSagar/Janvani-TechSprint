@@ -32,20 +32,24 @@ const IssueMap = ({ reports }) => {
 
             setMap(newMap);
             setInfoWindow(new window.google.maps.InfoWindow());
+        };
 
-            if (navigator.geolocation) {
+        // Geolocation Logic - separate from init to ensure it runs
+        const getUserLocation = (currentMap) => {
+            if (navigator.geolocation && currentMap) {
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
                         const pos = {
                             lat: position.coords.latitude,
                             lng: position.coords.longitude,
                         };
-                        newMap.setCenter(pos);
-                        newMap.setZoom(14);
+                        console.log("IssueMap: User location found", pos);
+                        currentMap.setCenter(pos);
+                        currentMap.setZoom(14);
 
                         new window.google.maps.Marker({
                             position: pos,
-                            map: newMap,
+                            map: currentMap,
                             title: "You are here",
                             icon: {
                                 path: "M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z",
@@ -59,8 +63,8 @@ const IssueMap = ({ reports }) => {
                             zIndex: 999
                         });
                     },
-                    () => {
-                        console.log("Error: The Geolocation service failed.");
+                    (error) => {
+                        console.warn("IssueMap: Geolocation failed", error);
                     }
                 );
             }
@@ -69,7 +73,7 @@ const IssueMap = ({ reports }) => {
         // Global Auth Failure Handler
         window.gm_authFailure = () => {
             console.error("Google Maps Auth Failure");
-            alert("Google Maps Error: The provided API Key is invalid or not authorized. Please check the browser console for details.");
+            // alert("Google Maps Error: The provided API Key is invalid or not authorized. Please check the browser console for details.");
         };
 
         // Load Script Logic
@@ -88,6 +92,41 @@ const IssueMap = ({ reports }) => {
             document.head.appendChild(script);
         }
     }, []);
+
+    // Effect to trigger geolocation once map is ready
+    useEffect(() => {
+        if (map) {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        const pos = {
+                            lat: position.coords.latitude,
+                            lng: position.coords.longitude,
+                        };
+                        map.setCenter(pos);
+                        map.setZoom(14);
+
+                        new window.google.maps.Marker({
+                            position: pos,
+                            map: map,
+                            title: "You are here",
+                            icon: {
+                                path: "M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z",
+                                fillColor: "#2962FF",
+                                fillOpacity: 1,
+                                strokeColor: "#ffffff",
+                                strokeWeight: 2,
+                                scale: 1.5,
+                                anchor: new window.google.maps.Point(12, 12)
+                            },
+                            zIndex: 999
+                        });
+                    },
+                    (e) => console.warn("Geolocation failed later:", e)
+                );
+            }
+        }
+    }, [map]);
 
 
     useEffect(() => {

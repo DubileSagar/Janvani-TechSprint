@@ -310,7 +310,6 @@ function App() {
 
           <div className={`nav-links ${isMenuOpen ? 'open' : ''}`}>
             <NavLink to="/home" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} onClick={closeMenu}>{t('nav_home')}</NavLink>
-            <NavLink to="/order-ranking" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} onClick={closeMenu}>Rankings</NavLink>
             <NavLink to="/about" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} onClick={closeMenu}>{t('nav_about')}</NavLink>
             <NavLink to="/chatbot" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} onClick={closeMenu}>{t('nav_jansathi')}</NavLink>
 
