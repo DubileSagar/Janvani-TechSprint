@@ -143,7 +143,7 @@ function App() {
     }
 
     // Redirect logic
-    if (window.location.pathname === '/' || window.location.pathname === '/signup') {
+    if (window.location.pathname === '/login' || window.location.pathname === '/signup') {
       navigate('/home', { replace: true });
     }
   };
@@ -160,7 +160,7 @@ function App() {
     const protectedPaths = ['/report', '/issues', '/profile', '/wallet', '/redeem'];
     const isOnProtected = protectedPaths.includes(window.location.pathname);
     if (isOnProtected) {
-      navigate('/', { replace: true });
+      navigate('/login', { replace: true });
     }
   };
 
@@ -263,7 +263,7 @@ function App() {
         sessionStorage.removeItem('cc_user_phone')
         localStorage.removeItem('cc_user_phone')
       } catch (_) { }
-      navigate('/', { replace: true })
+      navigate('/home', { replace: true })
     } catch (err) {
       console.error('Logout error:', err)
     }
@@ -271,7 +271,7 @@ function App() {
 
   const PrivateRoute = ({ children }) => {
     if (isLoading) return <div>Loading...</div>;
-    return isAuthenticated ? children : <Navigate to="/" replace />
+    return isAuthenticated ? children : <Navigate to="/login" replace />
   }
 
   if (isLoading) {
@@ -310,24 +310,22 @@ function App() {
 
           <div className={`nav-links ${isMenuOpen ? 'open' : ''}`}>
             <NavLink to="/home" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} onClick={closeMenu}>{t('nav_home')}</NavLink>
+            <NavLink to="/order-ranking" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} onClick={closeMenu}>Rankings</NavLink>
             <NavLink to="/about" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} onClick={closeMenu}>{t('nav_about')}</NavLink>
             <NavLink to="/chatbot" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} onClick={closeMenu}>{t('nav_jansathi')}</NavLink>
 
-            {isAuthenticated && (
-              <>
-                <NavLink to="/report" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} onClick={closeMenu}>{t('nav_report')}</NavLink>
-                <NavLink to="/issues" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} onClick={closeMenu}>{t('nav_issues')}</NavLink>
-                <NavLink to="/wallet" className={({ isActive }) => `nav-link wallet-link ${isActive ? 'active' : ''}`} onClick={closeMenu}>JanWallet</NavLink>
-                <NavLink to="/profile" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} onClick={closeMenu}>{t('nav_profile')}</NavLink>
-              </>
-            )}
+            <NavLink to="/report" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} onClick={closeMenu}>{t('nav_report')}</NavLink>
+            <NavLink to="/issues" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} onClick={closeMenu}>{t('nav_issues')}</NavLink>
+            <NavLink to="/wallet" className={({ isActive }) => `nav-link wallet-link ${isActive ? 'active' : ''}`} onClick={closeMenu}>JanWallet</NavLink>
+            <NavLink to="/profile" className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`} onClick={closeMenu}>{t('nav_profile')}</NavLink>
+
             {isAuthenticated ? (
               <div className="user-actions">
                 <button onClick={() => { handleLogout(); closeMenu(); }} className="logout-btn">{t('nav_logout')}</button>
               </div>
             ) : (
               <div className="user-actions">
-                <NavLink to="/" className="login-btn" onClick={closeMenu}>{t('nav_login')}</NavLink>
+                <NavLink to="/login" className="login-btn" onClick={closeMenu}>{t('nav_login')}</NavLink>
               </div>
             )}
           </div>
@@ -336,7 +334,8 @@ function App() {
       <div className="page-content">
         <Routes>
           { }
-          <Route path="/" element={<Form onLogin={handleLogin} onSendOtp={handleSendOtp} isLoading={isLoading} error={error} onLoginWithGoogle={handleLoginWithGoogle} onLoginWithApple={handleLoginWithApple} />} />
+          <Route path="/" element={<Navigate to="/home" replace />} />
+          <Route path="/login" element={<Form onLogin={handleLogin} onSendOtp={handleSendOtp} isLoading={isLoading} error={error} onLoginWithGoogle={handleLoginWithGoogle} onLoginWithApple={handleLoginWithApple} />} />
           <Route path="/signup" element={<SignupForm onSignup={handleSignup} onSendOtp={handleSendOtp} isLoading={isLoading} error={error} onLoginWithGoogle={handleLoginWithGoogle} onLoginWithApple={handleLoginWithApple} />} />
 
           { }
@@ -352,7 +351,7 @@ function App() {
           <Route path="/issue/:id" element={<PrivateRoute><IssueDetails /></PrivateRoute>} />
 
           { }
-          <Route path="*" element={<Navigate to={isAuthenticated ? '/home' : '/'} replace />} />
+          <Route path="*" element={<Navigate to="/home" replace />} />
         </Routes>
       </div>
 

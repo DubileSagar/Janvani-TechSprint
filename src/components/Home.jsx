@@ -141,9 +141,15 @@ const Home = () => {
               if (data.details && data.details.region) {
                 console.log("Home: Detected region from IP:", data.details.region);
                 setUserState(data.details.region);
+              } else {
+                console.warn("Home: IP region not found, defaulting to Andhra Pradesh");
+                setUserState('Andhra Pradesh');
               }
             })
-            .catch(err => console.warn("Home: Location detection failed", err));
+            .catch(err => {
+              console.warn("Home: Location detection failed, defaulting to Andhra Pradesh", err);
+              setUserState('Andhra Pradesh');
+            });
         }
       });
     });
