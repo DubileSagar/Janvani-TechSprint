@@ -11,6 +11,7 @@ import { useLanguage } from './context/LanguageContext';
 const Form = ({ onLogin, onSendOtp, error, onLoginWithGoogle, onLoginWithApple }) => {
   const { t } = useLanguage();
   const [phone, setPhone] = React.useState('');
+  const [email, setEmail] = React.useState('');
   const [otp, setOtp] = React.useState('');
   const [otpSent, setOtpSent] = React.useState(false);
   const [localIsLoading, setLocalIsLoading] = React.useState(false);
@@ -21,27 +22,35 @@ const Form = ({ onLogin, onSendOtp, error, onLoginWithGoogle, onLoginWithApple }
       alert(t('auth_alert_enter_mobile'));
       return;
     }
+    if (!email) {
+      alert(t('auth_alert_enter_email') || "Please enter Email ID");
+      return;
+    }
 
     setLocalIsLoading(true);
     try {
-      
-      
+
+
       const exists = await dbService.checkUserExists(phone);
       if (!exists) {
+        // If DB check fails, it means this phone hasn't signed up (according to our DB)
+        // But we still proceed if they want, or maybe we should block?
+        // Original code asked for confirmation. We'll keep that.
         const proceed = window.confirm(t('auth_alert_no_account_confirm') || "No account found with this number. Do you want to proceed gracefully to recover access?");
         if (!proceed) {
           setLocalIsLoading(false);
           return;
         }
-        
+
       }
 
-      await onSendOtp({ phone });
+      // Send to Email
+      await onSendOtp({ email, phone });
       setOtpSent(true);
-      alert(`${t('auth_alert_otp_sent')} ${phone}`);
+      alert(`${t('auth_alert_otp_sent')} ${email}`);
     } catch (err) {
       console.error(err);
-      
+      alert(`Error: ${err.message}`);
     } finally {
       setLocalIsLoading(false);
     }
@@ -53,7 +62,8 @@ const Form = ({ onLogin, onSendOtp, error, onLoginWithGoogle, onLoginWithApple }
 
     setLocalIsLoading(true);
     try {
-      await onLogin({ phone, otp });
+      // Pass email and phone
+      await onLogin({ email, otp, phone });
     } catch (err) {
       console.error(err);
     } finally {
@@ -73,6 +83,17 @@ const Form = ({ onLogin, onSendOtp, error, onLoginWithGoogle, onLoginWithApple }
           <input type="tel" className="input" placeholder={t('auth_mobile_input')} value={phone} onChange={(e) => setPhone(e.target.value)} disabled={otpSent} />
         </div>
 
+        <div className="flex-column">
+          <label>Email ID <span style={{ fontSize: '0.8em', color: '#666' }}>(Required for OTP)</span></label></div>
+        <div className="inputForm">
+          <svg xmlns="http://www.w3.org/2000/svg" width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+          <input type="email" className="input" placeholder="Enter Email ID" value={email} onChange={(e) => setEmail(e.target.value)} disabled={otpSent} />
+        </div>
+
+        <div style={{ fontSize: '12px', color: '#e65100', background: '#fff3e0', padding: '8px', borderRadius: '4px', marginTop: '5px' }}>
+          <strong>Note:</strong> Verification OTP will be sent to your <strong>Email ID</strong>.
+        </div>
+
         {otpSent && (
           <>
             <div className="flex-column">
@@ -86,7 +107,7 @@ const Form = ({ onLogin, onSendOtp, error, onLoginWithGoogle, onLoginWithApple }
         {error && <div style={{ color: 'red', textAlign: 'center', marginBottom: '10px' }}>{error}</div>}
 
         {!otpSent ? (
-          <button type="button" className="button-submit" onClick={handleSendOtpClick} disabled={localIsLoading || !phone}>
+          <button type="button" className="button-submit" onClick={handleSendOtpClick} disabled={localIsLoading || !phone || !email}>
             {localIsLoading ? t('auth_sending_otp') : t('send_otp_btn')}
           </button>
         ) : (

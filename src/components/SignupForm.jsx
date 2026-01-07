@@ -11,6 +11,7 @@ const SignupForm = ({ onSignup, onSendOtp, isLoading, error, onLoginWithGoogle, 
   const navigate = useNavigate();
   const [name, setName] = React.useState('')
   const [phone, setPhone] = React.useState('')
+  const [email, setEmail] = React.useState('')
   const [otp, setOtp] = React.useState('')
   const [otpSent, setOtpSent] = React.useState(false)
   const [step, setStep] = React.useState(1);
@@ -23,27 +24,28 @@ const SignupForm = ({ onSignup, onSendOtp, isLoading, error, onLoginWithGoogle, 
     }
     console.log('handleSendOtp called');
 
-    if (!phone || !name) {
-      alert(t('auth_enter_name_phone'));
+    if (!phone || !name || !email) {
+      alert(t('auth_enter_name_phone_email') || "Please enter Name, Phone, and Email");
       return;
     }
 
     setLocalIsLoading(true);
     try {
-      
+
       const exists = await dbService.checkUserExists(phone);
       if (exists) {
         alert(t('auth_account_exists'));
-        navigate('/'); 
+        navigate('/');
         setLocalIsLoading(false);
         return;
       }
 
-      console.log('Calling onSendOtp...');
-      await onSendOtp({ phone });
+      console.log('Calling onSendOtp with email...');
+      // Pass email for OTP, phone for record
+      await onSendOtp({ email, phone });
       console.log('onSendOtp success, updating state...');
 
-      
+
       setStep(2);
       setOtpSent(true);
       console.log('State updated: step=2, otpSent=true');
@@ -64,17 +66,18 @@ const SignupForm = ({ onSignup, onSendOtp, isLoading, error, onLoginWithGoogle, 
 
     setLocalIsLoading(true);
     try {
-      await onSignup({ name, phone, otp });
+      // Pass all details including email
+      await onSignup({ name, phone, email, otp });
 
-      
+
       try {
         await dbService.createUser(phone, name);
       } catch (dbErr) {
         console.error("Failed to create user profile in DB:", dbErr);
-        
+
       }
 
-      
+
     } catch (error) {
       console.error(error);
       alert(`${t('auth_signup_failed')} ${error.message}`);
@@ -101,6 +104,17 @@ const SignupForm = ({ onSignup, onSendOtp, isLoading, error, onLoginWithGoogle, 
         <div className="inputForm">
           <svg height={20} viewBox="0 0 384 512" width={20} xmlns="http://www.w3.org/2000/svg"><path d="M320 0H64C28.7 0 0 28.7 0 64v384c0 35.3 28.7 64 64 64h256c35.3 0 64-28.7 64-64V64c0-35.3-28.7-64-64-64zM192 480c-17.7 0-32-14.3-32-32h64c0 17.7-14.3 32-32 32zM320 384H64V64h256v320z" /></svg>
           <input type="tel" className="input" placeholder={t('auth_mobile_input')} value={phone} onChange={(e) => setPhone(e.target.value)} />
+        </div>
+
+        <div className="flex-column">
+          <label>Email ID <span style={{ fontSize: '0.8em', color: '#666' }}>(Required for OTP)</span></label></div>
+        <div className="inputForm">
+          <svg xmlns="http://www.w3.org/2000/svg" width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+          <input type="email" className="input" placeholder="Enter Email ID" value={email} onChange={(e) => setEmail(e.target.value)} />
+        </div>
+
+        <div style={{ fontSize: '12px', color: '#e65100', background: '#fff3e0', padding: '8px', borderRadius: '4px', marginTop: '5px' }}>
+          <strong>Note:</strong> As this is a prototype, verification OTP will be sent to your <strong>Email ID</strong>, but your account will be linked to your Phone Number.
         </div>
 
         {otpSent && (

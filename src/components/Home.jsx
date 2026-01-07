@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './Home.css';
 import RankingCard from './RankingCard';
-import NewsCard from './NewsCard'; 
+import NewsCard from './NewsCard';
 import { dbService } from '../api/db';
 import IssueMap from './IssueMap';
 import PerformanceHighlights from './PerformanceHighlights';
@@ -24,7 +24,7 @@ const BrandingStrip = () => (
         </div>
       </div>
       <div className="gov-logos-right">
-        {}
+        { }
         <div className="logo-badge g20">G20 🇮🇳</div>
         <div className="logo-badge swachh">Swachh Bharat</div>
         <div className="logo-badge amrit">Azadi Ka Amrit Mahotsav</div>
@@ -40,7 +40,7 @@ const HeroCarousel = ({ t }) => {
     {
       id: 1,
       image: heroBg,
-      title: t('hero_title'), 
+      title: t('hero_title'),
       desc: t('hero_desc'),
       cta: t('hero_cta'),
       link: "/report",
@@ -48,27 +48,27 @@ const HeroCarousel = ({ t }) => {
     },
     {
       id: 2,
-      
+
       image: swachhBg,
       title: "Swachh Bharat Abhiyan",
-      titleColor: '#ffffff', 
+      titleColor: '#ffffff',
       descColor: '#f0fdf4',
       desc: "Join the movement for a cleaner, greener India. Your contribution matters.",
       cta: "View Campaign",
       link: "/about",
-      hasOverlay: true 
+      hasOverlay: true
     },
     {
       id: 3,
-      
+
       image: impactBg,
       title: "10,000+ Issues Resolved",
-      titleColor: '#ffffff', 
+      titleColor: '#ffffff',
       descColor: '#f0fdf4',
       desc: "Citizens and administration working together for rapid grievance redressal.",
       cta: "See Impact",
       link: "/home",
-      hasOverlay: true 
+      hasOverlay: true
     }
   ];
 
@@ -101,7 +101,7 @@ const HeroCarousel = ({ t }) => {
             key={index}
             className={`dot ${index === currentSlide ? 'active' : ''}`}
             onClick={() => setCurrentSlide(index)}
-            style={{ border: '1px solid #ccc' }} 
+            style={{ border: '1px solid #ccc' }}
           ></span>
         ))}
       </div>
@@ -114,7 +114,7 @@ const Home = () => {
 
   const [activeCategory, setActiveCategory] = useState('All');
 
-  
+
   const [municipalityStats, setMunicipalityStats] = React.useState([]);
   const [recentReports, setRecentReports] = React.useState([]);
   const [loadingReports, setLoadingReports] = React.useState(true);
@@ -125,17 +125,31 @@ const Home = () => {
   React.useEffect(() => {
     const ctrl = new AbortController();
 
-    
+
     import('../supabase').then(({ supabase }) => {
       supabase.auth.getUser().then(({ data: { user } }) => {
         if (user && user.user_metadata && user.user_metadata.state) {
+          console.log("Home: Found logged-in user state:", user.user_metadata.state);
           setUserState(user.user_metadata.state);
+        } else {
+          // If no user (or no state in profile), try IP detection
+          console.log("Home: No user state, attempting IP detection...");
+          const API_URL = import.meta.env.VITE_API_BASE_URL || '';
+          fetch(`${API_URL}/api/check-access`) // Reuse this endpoint as it returns IPInfo data
+            .then(res => res.json())
+            .then(data => {
+              if (data.details && data.details.region) {
+                console.log("Home: Detected region from IP:", data.details.region);
+                setUserState(data.details.region);
+              }
+            })
+            .catch(err => console.warn("Home: Location detection failed", err));
         }
       });
     });
 
     const fetchReports = () => {
-      
+
       dbService.getReports(200)
         .then(reports => {
           setRecentReports(reports);
@@ -146,7 +160,7 @@ const Home = () => {
 
     fetchReports();
 
-    
+
     const onFocus = () => fetchReports();
     window.addEventListener('focus', onFocus);
 
@@ -156,7 +170,7 @@ const Home = () => {
     };
   }, []);
 
-  
+
   React.useEffect(() => {
     if (!userState) {
       console.log("Home: userState is empty, skipping stats fetch");
@@ -174,7 +188,7 @@ const Home = () => {
     });
   }, [userState]);
 
-  
+
   const filteredIssues = civicIssues.filter(issue => {
     const matchesCategory = activeCategory === 'All' || issue.category === activeCategory;
     return matchesCategory;
@@ -190,7 +204,7 @@ const Home = () => {
 
       <PerformanceHighlights items={municipalityStats} />
 
-      {}
+      { }
       <section className="trending-section">
         <div className="section-header">
           <h2>Trending Services</h2>
@@ -223,7 +237,7 @@ const Home = () => {
           <p>{t('common_issues_desc')}</p>
         </div>
 
-        {}
+        { }
         <div className="category-tabs">
           {categories.map(cat => (
             <button

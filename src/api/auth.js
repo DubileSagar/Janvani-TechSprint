@@ -4,16 +4,13 @@ import { supabase } from '../supabase';
 let currentSession = null;
 
 export const authService = {
-  
-  async sendOtp({ phone }) {
-    try {
-      
-      const formattedPhone = phone.startsWith('+') ? phone : `+91${phone}`;
 
-      console.log('Attempting to send OTP to:', formattedPhone);
+  async sendOtp({ email }) {
+    try {
+      console.log('Attempting to send OTP to:', email);
 
       const { data, error } = await supabase.auth.signInWithOtp({
-        phone: formattedPhone,
+        email: email,
       });
 
       if (error) {
@@ -21,26 +18,21 @@ export const authService = {
         throw error;
       }
 
-      console.log('OTP sent successfully');
+      console.log('OTP sent successfully to email');
       return { success: true };
     } catch (error) {
-      console.error('Firebase sendOtp error full object:', error);
-      console.error('Firebase sendOtp error code:', error.code);
-      console.error('Firebase sendOtp error message:', error.message);
+      console.error('Supabase sendOtp error full object:', error);
       throw new Error(error?.message || 'Failed to send OTP');
     }
   },
 
-  
-  async login({ phone, otp }) {
-    try {
-      
-      const formattedPhone = phone.startsWith('+') ? phone : `+91${phone}`;
 
+  async login({ email, otp }) {
+    try {
       const { data, error } = await supabase.auth.verifyOtp({
-        phone: formattedPhone,
+        email: email,
         token: otp,
-        type: 'sms',
+        type: 'email',
       });
 
       if (error) {
@@ -58,32 +50,40 @@ export const authService = {
     }
   },
 
-  
-  async signup({ name, phone, otp }) {
-    try {
-      
-      const { user } = await this.login({ phone, otp });
 
-      
-      if (name) {
+  async signup({ name, phone, email, otp }) {
+    try {
+      // 1. Verify OTP via Email
+      const { user } = await this.login({ email, otp });
+
+      // 2. Update Profile (Store Phone in Metadata since Auth is via Email)
+      const updates = {};
+      if (name) updates.display_name = name;
+      if (phone) updates.phone = phone; // Store phone in metadata
+
+      if (Object.keys(updates).length > 0) {
         const { data, error } = await supabase.auth.updateUser({
-          data: { display_name: name }
+          data: updates
         });
 
         if (error) {
           console.error('Error updating user metadata:', error);
+        } else {
+          // Merge metadata phone into user object for immediate return usage
+          if (data.user && data.user.user_metadata) {
+            user.user_metadata = data.user.user_metadata;
+          }
         }
       }
 
-      
-      return { success: true, user: { ...user, displayName: name } };
+      return { success: true, user: { ...user, displayName: name, phone: phone } };
     } catch (error) {
       console.error('Supabase signup error:', error);
       throw new Error(error?.message || 'Failed to complete signup');
     }
   },
 
-  
+
   async logout() {
     try {
       const { error } = await supabase.auth.signOut();
@@ -101,26 +101,26 @@ export const authService = {
     }
   },
 
-  
+
   getCurrentUser() {
     const { data: { user } } = supabase.auth.getUser();
     return user;
   },
 
-  
+
   async getSession() {
     const { data: { session } } = await supabase.auth.getSession();
     return session;
   },
 
-  
+
   onAuthStateChange(callback) {
     return supabase.auth.onAuthStateChanged((event, session) => {
       callback(session?.user || null);
     });
   },
 
-  
+
   async loginWithGoogle() {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
@@ -130,7 +130,7 @@ export const authService = {
     return data;
   },
 
-  
+
   async loginWithApple() {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'apple',
