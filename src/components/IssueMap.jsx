@@ -134,13 +134,15 @@ const IssueMap = ({ reports }) => {
 
         console.log(`IssueMap: Received ${reports.length} reports`);
 
+        // Create bounds object
+        const bounds = new window.google.maps.LatLngBounds();
+        let hasValidMarkers = false;
 
         markers.forEach(m => m.setMap(null));
         const newMarkers = [];
 
         reports.forEach(report => {
             let lat, lng;
-
 
             if (report.lat && report.lng) {
                 lat = parseFloat(report.lat);
@@ -153,12 +155,10 @@ const IssueMap = ({ reports }) => {
                 } catch (e) { }
             }
 
-            if (!lat || !lng || isNaN(lat) || isNaN(lng)) {
-                console.warn("Invalid coords for report:", report.$id);
+            // Check for valid numbers, allowing 0
+            if (lat === null || lat === undefined || isNaN(lat) || lng === null || lng === undefined || isNaN(lng)) {
                 return;
             }
-
-
 
             let issueType = null;
             if (report.issueTypeId) {
@@ -166,19 +166,15 @@ const IssueMap = ({ reports }) => {
             }
 
             if (!issueType) {
-
                 issueType = civicIssues.find(i => i.title === report.issueTitle);
             }
 
             const color = issueType ? issueType.color : '#3b82f6';
-
-
-
-
             const markerColor = getMarkerColor(color);
 
+            const position = { lat, lng };
             const marker = new window.google.maps.Marker({
-                position: { lat, lng },
+                position: position,
                 map: map,
                 title: report.issueTitle,
                 icon: {
@@ -191,10 +187,12 @@ const IssueMap = ({ reports }) => {
                 }
             });
 
+            // Add marker to bounds
+            bounds.extend(position);
+            hasValidMarkers = true;
+
             marker.addListener('click', () => {
                 const imageUrl = dbService.getImageUrl(report.imageId);
-
-
                 const status = (report.status || 'open').toLowerCase();
                 let statusColor = '#ef4444';
                 let statusLabel = 'Open';
@@ -230,6 +228,28 @@ const IssueMap = ({ reports }) => {
         });
 
         setMarkers(newMarkers);
+
+        // If markers exist, fit map to them
+        if (hasValidMarkers) {
+            // Also include user location if known
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition((position) => {
+                    const userPos = { lat: position.coords.latitude, lng: position.coords.longitude };
+                    bounds.extend(userPos);
+                    map.fitBounds(bounds);
+                    // Adjust zoom if too zoomed in (e.g. only 1 marker + user)
+                    const listener = google.maps.event.addListener(map, "idle", () => {
+                        if (map.getZoom() > 16) map.setZoom(16);
+                        google.maps.event.removeListener(listener);
+                    });
+                }, () => {
+                    // If geolocation fails, just fit to markers
+                    map.fitBounds(bounds);
+                });
+            } else {
+                map.fitBounds(bounds);
+            }
+        }
 
     }, [map, reports]);
 
