@@ -317,20 +317,34 @@ const IssueMap = ({ reports }) => {
                 onClick={handleFindNearest}
                 style={{
                     position: 'absolute',
-                    top: '10px',
-                    right: '10px',
+                    top: '12px',
+                    right: '12px',
                     zIndex: 1000,
-                    padding: '8px 16px',
-                    backgroundColor: '#fff',
-                    border: '1px solid #ccc',
-                    borderRadius: '4px',
+                    padding: '10px 20px',
+                    backgroundColor: '#2563EB', // Bright Blue
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '8px',
                     cursor: 'pointer',
-                    boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
-                    fontWeight: 'bold',
-                    color: '#1a73e8'
+                    boxShadow: '0 4px 12px rgba(37, 99, 235, 0.4)',
+                    fontWeight: '700',
+                    fontSize: '14px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '8px',
+                    transition: 'transform 0.2s, box-shadow 0.2s',
+                }}
+                onMouseOver={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-2px)';
+                    e.currentTarget.style.boxShadow = '0 6px 16px rgba(37, 99, 235, 0.5)';
+                }}
+                onMouseOut={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(37, 99, 235, 0.4)';
                 }}
             >
-                Take me to Nearest Issue
+                <span>📍</span>
+                Show Nearest Issue
             </button>
             <div ref={mapRef} style={{ width: '100%', height: '100%' }} />
         </div>
