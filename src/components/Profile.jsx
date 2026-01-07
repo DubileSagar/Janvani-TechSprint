@@ -19,13 +19,18 @@ const Profile = ({ currentUser }) => {
     const locationHook = useLocation(); // Imported from react-router-dom
 
     useEffect(() => {
-        if (locationHook.state?.newUser) {
-            console.log("Profile: New User detected, engaging onboarding mode.");
+        // Check both state (navigation) and LocalStorage (persistence)
+        const isNew = locationHook.state?.newUser || localStorage.getItem('onboarding_pending') === 'true';
+
+        if (isNew) {
+            console.log("Profile: New User detected (Flag present), engaging onboarding mode.");
             setIsEditing(true);
-            // Clear state so it doesn't persist on reload (optional, but good practice)
-            window.history.replaceState({}, document.title)
-            // Ideally use a toast here, for now alert or just the UI opening is enough
-            // setTimeout(() => alert("Welcome! Please complete your profile to continue."), 500);
+
+            // Clean up flags
+            localStorage.removeItem('onboarding_pending');
+            if (locationHook.state?.newUser) {
+                window.history.replaceState({}, document.title);
+            }
         }
     }, [locationHook]);
 

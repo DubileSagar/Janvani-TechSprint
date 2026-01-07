@@ -244,8 +244,9 @@ function App() {
         } catch (_) { }
 
         // Navigate to profile to complete details with new user flag
-        console.log("Signup success, redirecting to /profile for onboarding");
-        navigate('/profile', { replace: true, state: { newUser: true } })
+        console.log("Signup success, setting onboarding flag and redirecting");
+        localStorage.setItem('onboarding_pending', 'true'); // Robust flag
+        navigate('/profile', { replace: true });
       }
     } catch (err) {
       setError(err.message)
