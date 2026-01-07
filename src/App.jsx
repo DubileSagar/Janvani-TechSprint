@@ -143,7 +143,8 @@ function App() {
     }
 
     // Redirect logic
-    if (window.location.pathname === '/login' || window.location.pathname === '/signup') {
+    // DO NOT redirect if on /signup - let handleSignup control it
+    if (window.location.pathname === '/login') {
       navigate('/home', { replace: true });
     }
   };
@@ -242,8 +243,9 @@ function App() {
           localStorage.setItem('cc_user_phone', response.user.phone || '')
         } catch (_) { }
 
-        // Navigate to profile to complete details
-        navigate('/profile', { replace: true })
+        // Navigate to profile to complete details with new user flag
+        console.log("Signup success, redirecting to /profile for onboarding");
+        navigate('/profile', { replace: true, state: { newUser: true } })
       }
     } catch (err) {
       setError(err.message)

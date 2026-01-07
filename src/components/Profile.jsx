@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { supabase } from '../supabase';
-import { dbService } from '../api/db'; 
+import { dbService } from '../api/db';
 import { supportedLocations } from '../data/states-cities';
-import { detectAdministrativeArea } from '../api/gis'; 
+import { detectAdministrativeArea } from '../api/gis';
 import { getIssueTypeById } from '../constants/civicIssues';
 import './Profile.css';
 import { useLanguage } from '../context/LanguageContext';
@@ -14,7 +14,20 @@ const Profile = ({ currentUser }) => {
     const [loading, setLoading] = useState(!currentUser);
     const [saving, setSaving] = useState(false);
     const [user, setUser] = useState(currentUser || null);
-    const [isEditing, setIsEditing] = useState(false); 
+    const [isEditing, setIsEditing] = useState(false);
+
+    const locationHook = useLocation(); // Imported from react-router-dom
+
+    useEffect(() => {
+        if (locationHook.state?.newUser) {
+            console.log("Profile: New User detected, engaging onboarding mode.");
+            setIsEditing(true);
+            // Clear state so it doesn't persist on reload (optional, but good practice)
+            window.history.replaceState({}, document.title)
+            // Ideally use a toast here, for now alert or just the UI opening is enough
+            // setTimeout(() => alert("Welcome! Please complete your profile to continue."), 500);
+        }
+    }, [locationHook]);
 
     const [formData, setFormData] = useState({
         name: '',
@@ -27,7 +40,7 @@ const Profile = ({ currentUser }) => {
 
     const [availableDistricts, setAvailableDistricts] = useState([]);
     const [detectingLocation, setDetectingLocation] = useState(false);
-    const [myReports, setMyReports] = useState([]); 
+    const [myReports, setMyReports] = useState([]);
 
     useEffect(() => {
         const init = async () => {
@@ -74,7 +87,7 @@ const Profile = ({ currentUser }) => {
                         setUser(prev => ({ ...prev, ...dbUser }));
                     }
 
-                    
+
                     const reports = await dbService.getReportsByUser(userData.phone);
                     setMyReports(reports || []);
                 }
@@ -117,7 +130,7 @@ const Profile = ({ currentUser }) => {
         navigator.geolocation.getCurrentPosition(async (pos) => {
             const { latitude, longitude } = pos.coords;
             try {
-                
+
                 let gisDistrict = '';
                 try {
                     const gisResult = await detectAdministrativeArea(latitude, longitude);
@@ -128,7 +141,7 @@ const Profile = ({ currentUser }) => {
                     console.warn("GIS detection failed", gisErr);
                 }
 
-                
+
                 const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
                 const resp = await fetch(`https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&key=${apiKey}`);
                 const data = await resp.json();
@@ -205,7 +218,7 @@ const Profile = ({ currentUser }) => {
 
             if (error) throw error;
             alert("Profile updated!");
-            setIsEditing(false); 
+            setIsEditing(false);
         } catch (e) {
             console.error("Update failed", e);
             alert("Failed: " + e.message);
@@ -216,12 +229,12 @@ const Profile = ({ currentUser }) => {
 
     if (loading) return <div className="loading-screen">Loading Dashboard...</div>;
 
-    
+
     return (
         <div className="profile-page">
             <div className="dashboard-grid">
 
-                {}
+                { }
                 <aside className="profile-sidebar">
                     <div className="profile-card">
                         <div className="profile-avatar">
@@ -259,7 +272,7 @@ const Profile = ({ currentUser }) => {
                     </div>
                 </aside>
 
-                {}
+                { }
                 <main className="profile-main">
 
                     {isEditing ? (
@@ -325,7 +338,7 @@ const Profile = ({ currentUser }) => {
                         </div>
                     ) : (
                         <>
-                            {}
+                            { }
                             <div className="dashboard-card wallet-widget">
                                 <div className="card-header-row" style={{ borderBottomColor: 'rgba(255,255,255,0.2)' }}>
                                     <h2 style={{ color: 'white' }}>JanVani Wallet</h2>
@@ -347,7 +360,7 @@ const Profile = ({ currentUser }) => {
                                 </div>
                             </div>
 
-                            {}
+                            { }
                             <div className="dashboard-card">
                                 <div className="card-header-row">
                                     <h2>My Documents <span style={{ fontSize: '0.8rem', color: '#666', fontWeight: 'normal' }}>(DigiLocker Linked)</span></h2>
@@ -384,7 +397,7 @@ const Profile = ({ currentUser }) => {
                                 </div>
                             </div>
 
-                            {}
+                            { }
                             <div className="dashboard-card">
                                 <div className="card-header-row">
                                     <h2>Recent Reports</h2>
