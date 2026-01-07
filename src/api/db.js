@@ -3,14 +3,14 @@ import { ID, Query } from 'appwrite';
 import { cloudinaryService } from './cloudinary';
 
 const DB_ID = import.meta.env.VITE_APPWRITE_DATABASE_ID;
-const TABLE_ID = import.meta.env.VITE_APPWRITE_TABLE_ID_REPORTS; 
-const TABLE_ID_USERS = 'tb_users'; 
+const TABLE_ID = import.meta.env.VITE_APPWRITE_TABLE_ID_REPORTS;
+const TABLE_ID_USERS = 'tb_users';
 const STATE_DB_ID = '69306f670031d80567e0';
 const TABLE_ID_AP_REPORTS = 'ap_reports';
 const TABLE_ID_JH_REPORTS = 'jharkhand_reports';
 
 export const dbService = {
-    
+
     async _findUser(phone) {
         try {
             const cleanPhone = String(phone).replace(/\D/g, '');
@@ -28,7 +28,7 @@ export const dbService = {
                 databases.listDocuments(DB_ID, TABLE_ID_USERS, [Query.equal('phone', p)])
             );
             const results = await Promise.all(promises);
-            
+
             const found = results.find(r => r.documents.length > 0);
             return found ? found.documents[0] : null;
         } catch (error) {
@@ -37,15 +37,15 @@ export const dbService = {
         }
     },
 
-    
+
     async checkUserExists(phone) {
-        
-        
+
+
         const user = await this._findUser(phone);
         return !!user;
     },
 
-    
+
     async createUser(phone, name) {
         try {
             return await databases.createDocument(
@@ -60,13 +60,13 @@ export const dbService = {
         }
     },
 
-    
+
     async syncUser(authUser) {
         try {
             const phone = authUser.phone;
             if (!phone) return null;
 
-            
+
             const users = await databases.listDocuments(
                 DB_ID,
                 TABLE_ID_USERS,
@@ -74,19 +74,19 @@ export const dbService = {
             );
 
             if (users.documents.length > 0) {
-                
+
                 const doc = users.documents[0];
                 if (doc.points === undefined || doc.points === null) {
                     await databases.updateDocument(DB_ID, TABLE_ID_USERS, doc.$id, { points: 0 });
                 }
                 return doc;
             } else {
-                
+
                 console.log("Syncing user to DB:", phone);
                 return await databases.createDocument(
                     DB_ID,
                     TABLE_ID_USERS,
-                    authUser.id || ID.unique(), 
+                    authUser.id || ID.unique(),
                     {
                         phone: phone,
                         name: authUser.user_metadata?.display_name || 'Citizen',
@@ -102,21 +102,21 @@ export const dbService = {
             }
         } catch (error) {
             console.error("Sync user error:", error);
-            
+
             return null;
         }
     },
 
-    
+
     async getUserByPhone(phone) {
         return await this._findUser(phone);
     },
 
-    
+
     async addPointsToUser(phone, pointsToAdd) {
         try {
             console.log(`Rewarding ${pointsToAdd} points to ${phone}`);
-            
+
             const userDoc = await this._findUser(phone);
 
             if (!userDoc) {
@@ -127,7 +127,7 @@ export const dbService = {
             const currentPoints = userDoc.points || 0;
             const newPoints = currentPoints + pointsToAdd;
 
-            
+
             await databases.updateDocument(
                 DB_ID,
                 TABLE_ID_USERS,
@@ -143,7 +143,7 @@ export const dbService = {
         }
     },
 
-    
+
     async deductPointsFromUser(phone, pointsToDeduct) {
         try {
             console.log(`Deducting ${pointsToDeduct} points from ${phone}`);
@@ -176,10 +176,10 @@ export const dbService = {
         }
     },
 
-    
+
     async createReport(data) {
         try {
-            
+
             const payload = {
                 ...data,
                 reportDate: new Date().toISOString()
@@ -192,7 +192,7 @@ export const dbService = {
                 payload
             );
 
-            
+
             console.log("Checking state for dual-write:", data.state);
             if (data.state) {
                 let stateTableId = null;
@@ -210,12 +210,12 @@ export const dbService = {
                     try {
                         console.log(`Attempting to write to DB: ${STATE_DB_ID}, Collection: ${stateTableId}`);
 
-                        
-                        
-                        
+
+
+
                         const { gisData, reporterName, reporterPhone, status, ...rest } = data;
 
-                        
+
                         const stateData = {
                             ...rest,
                             lat: String(rest.lat),
@@ -236,7 +236,7 @@ export const dbService = {
                         console.log(`Report copied to ${stateTableId} in DB ${STATE_DB_ID}`);
                     } catch (stateErr) {
                         console.error(`Failed to copy report to state DB (${stateTableId}):`, stateErr);
-                        
+
                     }
                 }
             }
@@ -251,7 +251,7 @@ export const dbService = {
         }
     },
 
-    
+
     async getReports(limit = 50) {
         try {
             const response = await databases.listDocuments(
@@ -269,7 +269,40 @@ export const dbService = {
         }
     },
 
-    
+    async getStateReports(state) {
+        try {
+            if (!state) return [];
+            let stateTableId = null;
+            const stateLower = state.toLowerCase();
+
+            if (stateLower.includes('andhra pradesh')) {
+                stateTableId = TABLE_ID_AP_REPORTS;
+            } else if (stateLower.includes('jharkhand')) {
+                stateTableId = TABLE_ID_JH_REPORTS;
+            }
+
+            if (!stateTableId) return [];
+
+            console.log(`Fetching reports from State Table: ${stateTableId}`);
+            const response = await databases.listDocuments(
+                STATE_DB_ID,
+                stateTableId,
+                [
+                    Query.orderDesc('$createdAt'),
+                    Query.limit(50)
+                ]
+            );
+            return response.documents.map(doc => ({
+                ...doc,
+                createdInStateDb: true // Flag to identify source
+            }));
+        } catch (error) {
+            console.error(`Error fetching state reports for ${state}:`, error);
+            return [];
+        }
+    },
+
+
     async updateReport(id, data) {
         try {
             return await databases.updateDocument(
@@ -284,32 +317,32 @@ export const dbService = {
         }
     },
 
-    
+
     async getReportsByUser(phone) {
         try {
-            
+
             const cleanPhone = String(phone).replace(/\D/g, '');
-            
+
             const variants = [];
 
-            
+
             if (cleanPhone.length > 0) variants.push(cleanPhone);
 
-            
+
             if (cleanPhone.length === 10) {
                 variants.push(`+91${cleanPhone}`);
             }
 
-            
+
             if (cleanPhone.length === 12 && cleanPhone.startsWith('91')) {
-                variants.push(`+${cleanPhone}`); 
-                variants.push(cleanPhone.substring(2)); 
+                variants.push(`+${cleanPhone}`);
+                variants.push(cleanPhone.substring(2));
             }
 
-            
+
             variants.push(phone);
 
-            
+
             const uniqueVariants = [...new Set(variants)];
 
             const promises = uniqueVariants.map(p =>
@@ -317,7 +350,7 @@ export const dbService = {
             );
 
             const results = await Promise.all(promises);
-            
+
             const allDocs = results.flatMap(r => r.documents);
             const seen = new Set();
             return allDocs.filter(doc => {
@@ -331,7 +364,7 @@ export const dbService = {
         }
     },
 
-    
+
     async getReport(id) {
         try {
             return await databases.getDocument(
@@ -345,16 +378,16 @@ export const dbService = {
         }
     },
 
-    
+
     async getReportById(id) {
         return await this.getReport(id);
     },
 
 
 
-    
 
-    
+
+
     async uploadImage(file) {
         try {
             const BUCKET_ID = import.meta.env.VITE_APPWRITE_BUCKET_ID;
@@ -371,17 +404,17 @@ export const dbService = {
         }
     },
 
-    
+
     getImageUrl(fileId) {
         const BUCKET_ID = import.meta.env.VITE_APPWRITE_BUCKET_ID;
         if (!BUCKET_ID || !fileId) return null;
         return storage.getFileView(BUCKET_ID, fileId);
     },
 
-    
+
     async deleteReport(id, imageId) {
         try {
-            
+
             if (imageId) {
                 const BUCKET_ID = import.meta.env.VITE_APPWRITE_BUCKET_ID;
                 if (BUCKET_ID) {
@@ -389,12 +422,12 @@ export const dbService = {
                         await storage.deleteFile(BUCKET_ID, imageId);
                     } catch (e) {
                         console.error("Error deleting image:", e);
-                        
+
                     }
                 }
             }
 
-            
+
             await databases.deleteDocument(
                 DB_ID,
                 TABLE_ID,

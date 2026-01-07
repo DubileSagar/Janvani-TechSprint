@@ -154,14 +154,32 @@ const Home = () => {
       });
     });
 
-    const fetchReports = () => {
+    const fetchReports = async () => {
+      try {
+        setLoadingReports(true);
+        // Fetch main reports
+        const mainReports = await dbService.getReports(100);
 
-      dbService.getReports(200)
-        .then(reports => {
-          setRecentReports(reports);
-        })
-        .catch(e => console.error("Reports fetch failed:", e))
-        .finally(() => setLoadingReports(false));
+        // Fetch state reports if state is known
+        let stateReports = [];
+        if (userState) {
+          stateReports = await dbService.getStateReports(userState);
+        }
+
+        // Merge and deduplicate
+        const allReports = [...stateReports, ...mainReports];
+        const uniqueReports = Array.from(new Map(allReports.map(item => [item.$id, item])).values());
+
+        // Sort by date
+        uniqueReports.sort((a, b) => new Date(b.$createdAt) - new Date(a.$createdAt));
+
+        console.log(`Home: Displaying ${uniqueReports.length} reports (${stateReports.length} from state DB)`);
+        setRecentReports(uniqueReports);
+      } catch (e) {
+        console.error("Reports fetch failed:", e);
+      } finally {
+        setLoadingReports(false);
+      }
     };
 
     fetchReports();
@@ -174,7 +192,7 @@ const Home = () => {
       ctrl.abort();
       window.removeEventListener('focus', onFocus);
     };
-  }, []);
+  }, [userState]);
 
 
   React.useEffect(() => {
