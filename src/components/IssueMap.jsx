@@ -11,6 +11,9 @@ const IssueMap = ({ reports }) => {
     const [infoWindow, setInfoWindow] = useState(null);
 
 
+    const [userLocation, setUserLocation] = useState(null);
+    const [initialZoomDone, setInitialZoomDone] = useState(false);
+
     const defaultCenter = { lat: 16.3067, lng: 80.4365 };
 
     useEffect(() => {
@@ -34,9 +37,9 @@ const IssueMap = ({ reports }) => {
             setInfoWindow(new window.google.maps.InfoWindow());
         };
 
-        // Geolocation Logic - separate from init to ensure it runs
+        // Geolocation Logic
         const getUserLocation = (currentMap) => {
-            if (navigator.geolocation && currentMap) {
+            if (navigator.geolocation) {
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
                         const pos = {
@@ -44,12 +47,17 @@ const IssueMap = ({ reports }) => {
                             lng: position.coords.longitude,
                         };
                         console.log("IssueMap: User location found", pos);
-                        currentMap.setCenter(pos);
-                        currentMap.setZoom(14);
+                        setUserLocation(pos);
+
+                        if (currentMap) {
+                            currentMap.setCenter(pos);
+                            currentMap.setZoom(14); // Zoom in on user
+                            setInitialZoomDone(true);
+                        }
 
                         new window.google.maps.Marker({
                             position: pos,
-                            map: currentMap,
+                            map: currentMap || map,
                             title: "You are here",
                             icon: {
                                 path: "M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z",
@@ -103,8 +111,13 @@ const IssueMap = ({ reports }) => {
                             lat: position.coords.latitude,
                             lng: position.coords.longitude,
                         };
-                        map.setCenter(pos);
-                        map.setZoom(14);
+                        setUserLocation(pos); // Save location state
+
+                        if (!initialZoomDone) {
+                            map.setCenter(pos);
+                            map.setZoom(14);
+                            setInitialZoomDone(true);
+                        }
 
                         new window.google.maps.Marker({
                             position: pos,
@@ -187,7 +200,7 @@ const IssueMap = ({ reports }) => {
                 }
             });
 
-            // Add marker to bounds
+            // Add marker to bounds (but don't auto-fit unless user loc missing)
             bounds.extend(position);
             hasValidMarkers = true;
 
@@ -229,26 +242,9 @@ const IssueMap = ({ reports }) => {
 
         setMarkers(newMarkers);
 
-        // If markers exist, fit map to them
-        if (hasValidMarkers) {
-            // Also include user location if known
-            if (navigator.geolocation) {
-                navigator.geolocation.getCurrentPosition((position) => {
-                    const userPos = { lat: position.coords.latitude, lng: position.coords.longitude };
-                    bounds.extend(userPos);
-                    map.fitBounds(bounds);
-                    // Adjust zoom if too zoomed in (e.g. only 1 marker + user)
-                    const listener = google.maps.event.addListener(map, "idle", () => {
-                        if (map.getZoom() > 16) map.setZoom(16);
-                        google.maps.event.removeListener(listener);
-                    });
-                }, () => {
-                    // If geolocation fails, just fit to markers
-                    map.fitBounds(bounds);
-                });
-            } else {
-                map.fitBounds(bounds);
-            }
+        // Logic check: If user location is NOT found yet/ever, fallback to bounds
+        if (hasValidMarkers && !initialZoomDone && !navigator.geolocation) {
+            map.fitBounds(bounds);
         }
 
     }, [map, reports]);
@@ -266,8 +262,76 @@ const IssueMap = ({ reports }) => {
         return '#3b82f6';
     };
 
+    const handleFindNearest = () => {
+        if (!userLocation || !reports.length || !map) {
+            alert("Waiting for user location or no reports available.");
+            return;
+        }
+
+        let nearest = null;
+        let minDistance = Infinity;
+
+        // Simple Haversine or direct Euclidean (approx for small areas)
+        // Using simple geometric distance for speed on client coords
+        const rad = x => x * Math.PI / 180;
+        const R = 6371; // Earth radius km
+
+        reports.forEach(r => {
+            let lat, lng;
+            if (r.lat && r.lng) { lat = parseFloat(r.lat); lng = parseFloat(r.lng); }
+            else if (r.coords) { try { const c = JSON.parse(r.coords); lat = c.lat; lng = c.lng; } catch (e) { } }
+
+            if (!lat || !lng) return;
+
+            const dLat = rad(lat - userLocation.lat);
+            const dLon = rad(lng - userLocation.lng);
+            const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+                Math.cos(rad(userLocation.lat)) * Math.cos(rad(lat)) *
+                Math.sin(dLon / 2) * Math.sin(dLon / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            const d = R * c; // Distance in km
+
+            if (d < minDistance) {
+                minDistance = d;
+                nearest = { lat, lng, title: r.issueTitle };
+            }
+        });
+
+        if (nearest) {
+            map.setCenter({ lat: nearest.lat, lng: nearest.lng });
+            map.setZoom(16); // Close up on the issue
+            // Optional: trigger click on marker if we could match it, or just show a new info window? 
+            // For now, just centering is good.
+            new window.google.maps.InfoWindow({
+                content: `<div style="padding:5px"><b>Nearest Issue (~${minDistance.toFixed(2)}km)</b><br/>${nearest.title}</div>`,
+                position: { lat: nearest.lat, lng: nearest.lng }
+            }).open(map);
+        } else {
+            alert("No nearby issues found.");
+        }
+    };
+
     return (
-        <div className="issue-map-container">
+        <div className="issue-map-container" style={{ position: 'relative' }}>
+            <button
+                onClick={handleFindNearest}
+                style={{
+                    position: 'absolute',
+                    top: '10px',
+                    right: '10px',
+                    zIndex: 1000,
+                    padding: '8px 16px',
+                    backgroundColor: '#fff',
+                    border: '1px solid #ccc',
+                    borderRadius: '4px',
+                    cursor: 'pointer',
+                    boxShadow: '0 2px 6px rgba(0,0,0,0.3)',
+                    fontWeight: 'bold',
+                    color: '#1a73e8'
+                }}
+            >
+                Take me to Nearest Issue
+            </button>
             <div ref={mapRef} style={{ width: '100%', height: '100%' }} />
         </div>
     );
